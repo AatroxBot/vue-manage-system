@@ -7,3 +7,12 @@ export const fetchData = query => {
         params: query
     });
 };
+
+
+export const fetchPermission = query => {
+    return request({
+        url: './permission.json',
+        method: 'get',
+        params: query
+    });
+};
