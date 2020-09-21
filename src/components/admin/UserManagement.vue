@@ -8,13 +8,15 @@
             </el-breadcrumb>
         </div>
         <div class="container">
-            <div class="handle-box">
+            <div class="handle-box" >
                 <el-button
                     type="primary"
                     icon="el-icon-delete"
                     class="handle-del mr10"
-                    @click="delAllSelection"
-                >新增用户</el-button>
+                    @click="editVisible=true"
+                >新增用户
+                </el-button>
+                
                 <el-select v-model="query.address" placeholder="地址" class="handle-select mr10">
                     <el-option key="1" label="广东省" value="广东省"></el-option>
                     <el-option key="2" label="湖南省" value="湖南省"></el-option>
