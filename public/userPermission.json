@@ -14,12 +14,17 @@
         "UserPermissions": [
             {
                 "PermissionID": "0",
-                "PermissionType": 2,
+                "PermissionType": 1,
                 "UserCode": "test1"
             },
             {
                 "PermissionID": "1",
                 "PermissionType": 2,
+                "UserCode": "test1"
+            },
+            {
+                "PermissionID": "2",
+                "PermissionType": 3,
                 "UserCode": "test1"
             }
         ]

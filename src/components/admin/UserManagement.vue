@@ -31,12 +31,12 @@
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="name" label="用户名"></el-table-column>
-                <el-table-column label="账户余额">
-                    <template slot-scope="scope">￥{{scope.row.money}}</template>
-                </el-table-column>
-                <el-table-column label="头像(查看大图)" align="center">
+                <!-- <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column> -->
+                <el-table-column prop="UserName" label="用户名"></el-table-column>
+                <!-- <el-table-column label="账户余额">
+                    <template slot-scope="scope">{{scope.row.SuperUser}}</template>
+                </el-table-column>-->
+                <!-- <el-table-column label="头像(查看大图)" align="center">
                     <template slot-scope="scope">
                         <el-image
                             class="table-td-thumb"
@@ -44,17 +44,17 @@
                             :preview-src-list="[scope.row.thumb]"
                         ></el-image>
                     </template>
-                </el-table-column>
-                <el-table-column prop="address" label="地址"></el-table-column>
+                </el-table-column>-->
+                <!-- <el-table-column prop="address" label="地址"></el-table-column> -->
                 <el-table-column label="状态" align="center">
                     <template slot-scope="scope">
                         <el-tag
-                            :type="scope.row.state==='成功'?'success':(scope.row.state==='失败'?'danger':'')"
-                        >{{scope.row.state}}</el-tag>
+                            :type="scope.row.SuperUser===true?'success':'false'"
+                        >{{scope.row.SuperUser}}</el-tag>
                     </template>
                 </el-table-column>
 
-                <el-table-column prop="date" label="注册时间"></el-table-column>
+                <!-- <el-table-column prop="date" label="注册时间"></el-table-column> -->
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
@@ -83,17 +83,17 @@
             </div>
         </div>
 
-        <!-- 编辑弹出框  title="编辑"-->
-        <el-dialog  :visible.sync="editVisible" width="50%">
+        <!-- 编辑弹出框 -->
+        <el-dialog :title="title" :visible.sync="editVisible" width="40%">
             <el-form ref="form" :model="form" label-width="70px">
                 <el-form-item label="用户名">
-                    <el-input v-model="form.name"></el-input>
+                    <el-input v-model="form.UserName"></el-input>
                 </el-form-item>
                 <el-form-item label="地址">
                     <el-input v-model="form.address"></el-input>
                 </el-form-item>
                 <el-form-item label="权限">
-                    <div v-for="item in permissionData" :key="item.PermissionGroupID">
+                    <!-- <div v-for="item in permissionData" :key="item.PermissionGroupID">
                         <el-tag>{{item.PermissioGroupName}}</el-tag>
                         <el-checkbox-group v-model="selectPermission">
                             <el-checkbox
@@ -103,7 +103,44 @@
                                 name="type"
                             >{{j.PermissionName}}</el-checkbox>
                         </el-checkbox-group>
+                    </div>-->
+                    <div v-for="item in form.UserPermissions" :key="item.PermissionID">
+                        <el-tag>{{item.PermissionID=='0'?'用户设置':item.PermissionID=='1'?'基础设置':'任务设置'}}</el-tag>
+                         <br />
+                        <el-radio-group v-model="item.PermissionType">
+                            <el-radio :label="1">无权限</el-radio>
+                            <el-radio :label="2">只读权限</el-radio>
+                            <el-radio :label="3">读写权限</el-radio>
+                        </el-radio-group>
                     </div>
+
+                    <!-- <div>
+                        <el-tag>用户设置</el-tag>
+                        <br />
+                        <el-radio-group v-model="radio1">
+                            <el-radio :label="1">无权限</el-radio>
+                            <el-radio :label="2">只读权限</el-radio>
+                            <el-radio :label="3">读写权限</el-radio>
+                        </el-radio-group>
+                    </div>
+                    <div>
+                        <el-tag>基础设置</el-tag>
+                        <br />
+                        <el-radio-group v-model="radio2">
+                            <el-radio :label="1">无权限</el-radio>
+                            <el-radio :label="2">只读权限</el-radio>
+                            <el-radio :label="3">读写权限</el-radio>
+                        </el-radio-group>
+                    </div>
+                    <div>
+                        <el-tag>任务设置</el-tag>
+                        <br />
+                        <el-radio-group v-model="radio3">
+                            <el-radio :label="1">无权限</el-radio>
+                            <el-radio :label="2">只读权限</el-radio>
+                            <el-radio :label="3">读写权限</el-radio>
+                        </el-radio-group>
+                    </div>-->
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -136,7 +173,9 @@ export default {
             idx: -1,
             id: -1,
             permissionData: [],
-            selectPermission: ['301']
+            selectPermission: ['301'],
+            title: '',
+           
         };
     },
     created() {
@@ -147,18 +186,15 @@ export default {
         // 获取数据
         getData() {
             //获取table表单基础用户信息
-            fetchData(this.query).then((res) => {
-                console.log(res);
-                this.tableData = res.list;
-                this.pageTotal = res.pageTotal || 50;
-            });
+            // fetchData(this.query).then((res) => {
+            //     console.log(res);
+            //     this.tableData = res.list;
+            //     this.pageTotal = res.pageTotal || 50;
+            // });
             //根据登录用户权限获取所有用户信息
-             getUserList().then((res) => {
-             console.log(11); 
-             console.log(res); 
-
-
-
+            getUserList().then((res) => {
+                console.log(res);
+                this.tableData = res;
             });
         },
         getAllPermission() {
@@ -169,7 +205,6 @@ export default {
             });
             //获取用户权限信息
             //this.selectPermission = localStorage.getItem('ms_userPermission');
-           
         },
         // 触发搜索按钮
         handleSearch() {
@@ -207,12 +242,15 @@ export default {
             this.idx = index;
             this.form = row;
             this.editVisible = true;
+            this.title = '编辑';
             //this.handlePermissionChecked(row.Permission);
-            console.log(row.Permission);
-            for (let i = 0; i < row.Permission.length; i++) {
-                this.$set(this.selectPermission, i, row.Permission[i]);
-            }
-            console.log(selectPermission);
+            console.log(11);
+            console.log(row);
+            console.log(row.UserPermissions);
+            // for (let i = 0; i < row.UserPermissions.length; i++) {
+            //     this.$set(this.selectPermission, i, row.UserPermissions[i]);
+            // }
+            // console.log(selectPermission);
         },
         // 保存新增/编辑
         saveEdit() {
@@ -227,10 +265,11 @@ export default {
             this.$set(this.query, 'pageIndex', val);
             this.getData();
         },
-        addNewUser(){
+        addNewUser() {
             this.idx = 0;
             this.form = {};
             this.editVisible = true;
+            this.title = '新增';
         }
         //根据权限id选中对应的checkbox
         //handlePermissionChecked(val) {
