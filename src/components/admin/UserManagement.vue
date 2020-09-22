@@ -141,6 +141,7 @@ export default {
     },
     created() {
         this.getData();
+        this.getAllPermission();
     },
     methods: {
         // 获取 easy-mock 的模拟数据
@@ -151,14 +152,16 @@ export default {
                 this.tableData = res.list;
                 this.pageTotal = res.pageTotal || 50;
             });
+          
+        },
+        getAllPermission(){
             //获取全部权限信息
             fetchPermission().then((res) => {
                 console.log(res);
                 this.permissionData = res.PermissionList;
             });
-            //获取用户权限信息
+              //获取用户权限信息
         },
-
         // 触发搜索按钮
         handleSearch() {
             this.$set(this.query, 'pageIndex', 1);
@@ -206,6 +209,8 @@ export default {
         saveEdit() {
             this.editVisible = false;
             this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+            //调用接口保存
+            
             this.$set(this.tableData, this.idx, this.form);
         },
         // 分页导航
