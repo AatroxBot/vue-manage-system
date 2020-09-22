@@ -1,0 +1,27 @@
+[
+    {
+        "Password": "mjTpthRnpQc=",
+        "SuperUser": true,
+        "UserCode": "admin",
+        "UserName": "admin",
+        "UserPermissions": []
+    },
+    {
+        "Password": "mjTpthRnpQc=",
+        "SuperUser": false,
+        "UserCode": "test1",
+        "UserName": "test1",
+        "UserPermissions": [
+            {
+                "PermissionID": "0",
+                "PermissionType": 2,
+                "UserCode": "test1"
+            },
+            {
+                "PermissionID": "1",
+                "PermissionType": 2,
+                "UserCode": "test1"
+            }
+        ]
+    }
+]

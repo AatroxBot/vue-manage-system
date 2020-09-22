@@ -17,6 +17,7 @@ export const fetchPermission = query => {
     });
 };
 
+//登录
 export const Login = query => {
     return request({
         url: 'http://106.15.126.218:8201/Login.ashx',
@@ -24,6 +25,15 @@ export const Login = query => {
         headers:query,
     });
 };
-
+//获取所有用户列表
+export const getUserList = () => {
+    return request({
+        url: 'http://106.15.126.218:8201/GetUserObjectList.ashx',
+        method: 'get',
+        xhrFields: {
+            withCredentials: true // 发送Ajax时，Request header中会带上 Cookie 信息。
+        },
+    });
+};
 
 

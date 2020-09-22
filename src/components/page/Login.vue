@@ -49,18 +49,24 @@ export default {
         submitForm() {
             this.$refs.login.validate((valid) => {
                 if (valid) {
-                    //请求登录接口
-                    Login(this.auth).then((res) => {
-                        console.log(res);
-                        if (res.c == 401) {
-                            this.$message.error(res.m);
-                            return false;
-                        } else {
-                            this.$message.success('登录成功');
-                            localStorage.setItem('ms_username', this.param.username);
-                            this.$router.push('/');
-                        }
-                    });
+                    try {
+                        //请求登录接口
+                        Login(this.auth).then((res) => {
+                            console.log(res);
+                            if (res.c == 401) {
+                                this.$message.error(res.m);
+                                return false;
+                            } else {
+                                this.$message.success('登录成功');
+                                localStorage.setItem('ms_username', res.UserName);
+                                localStorage.setItem('ms_userPermission', res.UserPermissions);
+                                this.$router.push('/');
+                            }
+                        });
+                    } catch (ex) {
+                        this.$message.error(ex);
+                        return false;
+                    }
                 } else {
                     this.$message.error('请输入账号和密码');
                     console.log('error submit!!');
