@@ -8,15 +8,13 @@
             </el-breadcrumb>
         </div>
         <div class="container">
-            <div class="handle-box" >
+            <div class="handle-box">
                 <el-button
                     type="primary"
-                    icon="el-icon-delete"
+                    icon="el-icon-lx-add"
                     class="handle-del mr10"
-                    @click="editVisible=true"
-                >新增用户
-                </el-button>
-                
+                    @click="addNewUser"
+                >新增用户</el-button>
                 <el-select v-model="query.address" placeholder="地址" class="handle-select mr10">
                     <el-option key="1" label="广东省" value="广东省"></el-option>
                     <el-option key="2" label="湖南省" value="湖南省"></el-option>
@@ -85,8 +83,8 @@
             </div>
         </div>
 
-        <!-- 编辑弹出框 -->
-        <el-dialog title="编辑" :visible.sync="editVisible" width="50%">
+        <!-- 编辑弹出框  title="编辑"-->
+        <el-dialog  :visible.sync="editVisible" width="50%">
             <el-form ref="form" :model="form" label-width="70px">
                 <el-form-item label="用户名">
                     <el-input v-model="form.name"></el-input>
@@ -117,7 +115,7 @@
 </template>
 
 <script>
-import { fetchData, fetchPermission } from '../../api/index';
+import { fetchData, fetchPermission, getUserList } from '../../api/index';
 
 export default {
     name: 'usertable',
@@ -143,9 +141,10 @@ export default {
     },
     created() {
         this.getData();
+        this.getAllPermission();
     },
     methods: {
-        // 获取 easy-mock 的模拟数据
+        // 获取数据
         getData() {
             //获取table表单基础用户信息
             fetchData(this.query).then((res) => {
@@ -153,14 +152,25 @@ export default {
                 this.tableData = res.list;
                 this.pageTotal = res.pageTotal || 50;
             });
+            //根据登录用户权限获取所有用户信息
+             getUserList().then((res) => {
+             console.log(11); 
+             console.log(res); 
+
+
+
+            });
+        },
+        getAllPermission() {
             //获取全部权限信息
             fetchPermission().then((res) => {
                 console.log(res);
                 this.permissionData = res.PermissionList;
             });
             //获取用户权限信息
+            //this.selectPermission = localStorage.getItem('ms_userPermission');
+           
         },
-
         // 触发搜索按钮
         handleSearch() {
             this.$set(this.query, 'pageIndex', 1);
@@ -204,8 +214,10 @@ export default {
             }
             console.log(selectPermission);
         },
-        // 保存编辑
+        // 保存新增/编辑
         saveEdit() {
+            //调用接口保存
+
             this.editVisible = false;
             this.$message.success(`修改第 ${this.idx + 1} 行成功`);
             this.$set(this.tableData, this.idx, this.form);
@@ -214,6 +226,11 @@ export default {
         handlePageChange(val) {
             this.$set(this.query, 'pageIndex', val);
             this.getData();
+        },
+        addNewUser(){
+            this.idx = 0;
+            this.form = {};
+            this.editVisible = true;
         }
         //根据权限id选中对应的checkbox
         //handlePermissionChecked(val) {
