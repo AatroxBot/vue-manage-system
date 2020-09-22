@@ -11,7 +11,7 @@
             <div class="handle-box">
                 <el-button
                     type="primary"
-                    icon="el-icon-delete"
+                    icon="el-icon-lx-add"
                     class="handle-del mr10"
                     @click="addNewUser"
                 >新增用户</el-button>
@@ -83,8 +83,8 @@
             </div>
         </div>
 
-        <!-- 编辑弹出框 -->
-        <el-dialog title="编辑" :visible.sync="editVisible" width="50%">
+        <!-- 编辑弹出框  title="编辑"-->
+        <el-dialog  :visible.sync="editVisible" width="50%">
             <el-form ref="form" :model="form" label-width="70px">
                 <el-form-item label="用户名">
                     <el-input v-model="form.name"></el-input>
@@ -144,7 +144,7 @@ export default {
         this.getAllPermission();
     },
     methods: {
-        // 获取 easy-mock 的模拟数据
+        // 获取数据
         getData() {
             //获取table表单基础用户信息
             fetchData(this.query).then((res) => {
@@ -168,7 +168,7 @@ export default {
                 this.permissionData = res.PermissionList;
             });
             //获取用户权限信息
-            this.selectPermission = localStorage.getItem('ms_userPermission');
+            //this.selectPermission = localStorage.getItem('ms_userPermission');
            
         },
         // 触发搜索按钮
@@ -229,7 +229,7 @@ export default {
         },
         addNewUser(){
             this.idx = 0;
-            this.form = null;
+            this.form = {};
             this.editVisible = true;
         }
         //根据权限id选中对应的checkbox
