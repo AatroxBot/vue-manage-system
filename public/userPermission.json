@@ -4,7 +4,23 @@
         "SuperUser": true,
         "UserCode": "admin",
         "UserName": "admin",
-        "UserPermissions": []
+        "UserPermissions": [
+            {
+                "PermissionGroupID": "0",
+                "PermissionType": 2,
+                "UserCode": "admin"
+            },
+            {
+                "PermissionGroupID": "1",
+                "PermissionType": 2,
+                "UserCode": "admin"
+            },
+            {
+                "PermissionGroupID": "2",
+                "PermissionType": 2,
+                "UserCode": "admin"
+            }
+        ]
     },
     {
         "Password": "mjTpthRnpQc=",
@@ -13,18 +29,18 @@
         "UserName": "test1",
         "UserPermissions": [
             {
-                "PermissionID": "0",
-                "PermissionType": 1,
-                "UserCode": "test1"
-            },
-            {
-                "PermissionID": "1",
+                "PermissionGroupID": "0",
                 "PermissionType": 2,
                 "UserCode": "test1"
             },
             {
-                "PermissionID": "2",
-                "PermissionType": 3,
+                "PermissionGroupID": "1",
+                "PermissionType": 2,
+                "UserCode": "test1"
+            },
+            {
+                "PermissionGroupID": "2",
+                "PermissionType": 0,
                 "UserCode": "test1"
             }
         ]

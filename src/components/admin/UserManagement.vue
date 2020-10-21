@@ -15,10 +15,10 @@
                     class="handle-del mr10"
                     @click="addNewUser"
                 >新增用户</el-button>
-                <el-select v-model="query.address" placeholder="地址" class="handle-select mr10">
+                <!-- <el-select v-model="query.address" placeholder="地址" class="handle-select mr10">
                     <el-option key="1" label="广东省" value="广东省"></el-option>
                     <el-option key="2" label="湖南省" value="湖南省"></el-option>
-                </el-select>
+                </el-select>-->
                 <el-input v-model="query.name" placeholder="用户名" class="handle-input mr10"></el-input>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
             </div>
@@ -46,11 +46,11 @@
                     </template>
                 </el-table-column>-->
                 <!-- <el-table-column prop="address" label="地址"></el-table-column> -->
-                <el-table-column label="状态" align="center">
+                <el-table-column label="管理员" align="center">
                     <template slot-scope="scope">
                         <el-tag
                             :type="scope.row.SuperUser===true?'success':'false'"
-                        >{{scope.row.SuperUser}}</el-tag>
+                        >{{scope.row.SuperUser===true?'是':'否'}}</el-tag>
                     </template>
                 </el-table-column>
 
@@ -89,8 +89,13 @@
                 <el-form-item label="用户名">
                     <el-input v-model="form.UserName"></el-input>
                 </el-form-item>
-                <el-form-item label="地址">
-                    <el-input v-model="form.address"></el-input>
+                <el-form-item label="密码">
+                    <el-input v-model="form.Password" :type="passw">
+                        <i slot="suffix" :class="icon" @click="showPass"></i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="管理员">
+                    <el-checkbox v-model="form.SuperUser"></el-checkbox>
                 </el-form-item>
                 <el-form-item label="权限">
                     <!-- <div v-for="item in permissionData" :key="item.PermissionGroupID">
@@ -104,43 +109,15 @@
                             >{{j.PermissionName}}</el-checkbox>
                         </el-checkbox-group>
                     </div>-->
-                    <div v-for="item in form.UserPermissions" :key="item.PermissionID">
-                        <el-tag>{{item.PermissionID=='0'?'用户设置':item.PermissionID=='1'?'基础设置':'任务设置'}}</el-tag>
-                         <br />
+                    <div v-for="item in form.UserPermissions" :key="item.PermissionGroupID">
+                        <el-tag>{{item.PermissionGroupID=='0'?'用户设置':item.PermissionGroupID=='1'?'基础设置':'任务设置'}}</el-tag>
+                        <br />
                         <el-radio-group v-model="item.PermissionType">
-                            <el-radio :label="1">无权限</el-radio>
-                            <el-radio :label="2">只读权限</el-radio>
-                            <el-radio :label="3">读写权限</el-radio>
+                            <el-radio :label="0">无权限</el-radio>
+                            <el-radio :label="1">只读权限</el-radio>
+                            <el-radio :label="2">读写权限</el-radio>
                         </el-radio-group>
                     </div>
-
-                    <!-- <div>
-                        <el-tag>用户设置</el-tag>
-                        <br />
-                        <el-radio-group v-model="radio1">
-                            <el-radio :label="1">无权限</el-radio>
-                            <el-radio :label="2">只读权限</el-radio>
-                            <el-radio :label="3">读写权限</el-radio>
-                        </el-radio-group>
-                    </div>
-                    <div>
-                        <el-tag>基础设置</el-tag>
-                        <br />
-                        <el-radio-group v-model="radio2">
-                            <el-radio :label="1">无权限</el-radio>
-                            <el-radio :label="2">只读权限</el-radio>
-                            <el-radio :label="3">读写权限</el-radio>
-                        </el-radio-group>
-                    </div>
-                    <div>
-                        <el-tag>任务设置</el-tag>
-                        <br />
-                        <el-radio-group v-model="radio3">
-                            <el-radio :label="1">无权限</el-radio>
-                            <el-radio :label="2">只读权限</el-radio>
-                            <el-radio :label="3">读写权限</el-radio>
-                        </el-radio-group>
-                    </div>-->
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -152,7 +129,7 @@
 </template>
 
 <script>
-import { fetchData, fetchPermission, getUserList } from '../../api/index';
+import { fetchData, fetchPermission, getUserList, UpdateUser, DelUser, AddUser } from '../../api/index';
 
 export default {
     name: 'usertable',
@@ -175,7 +152,10 @@ export default {
             permissionData: [],
             selectPermission: ['301'],
             title: '',
-           
+            //用于改变Input类型
+            passw: 'password',
+            //用于更换Input中的图标
+            icon: 'el-input__icon el-icon-view'
         };
     },
     created() {
@@ -193,6 +173,7 @@ export default {
             // });
             //根据登录用户权限获取所有用户信息
             getUserList().then((res) => {
+                console.log(11);
                 console.log(res);
                 this.tableData = res;
             });
@@ -218,8 +199,10 @@ export default {
                 type: 'warning'
             })
                 .then(() => {
-                    this.$message.success('删除成功');
-                    this.tableData.splice(index, 1);
+                    DelUser(this.row.UserCode).then((res) => {
+                        this.$message.success('删除成功');
+                        this.tableData.splice(index, 1);
+                    });
                 })
                 .catch(() => {});
         },
@@ -244,7 +227,7 @@ export default {
             this.editVisible = true;
             this.title = '编辑';
             //this.handlePermissionChecked(row.Permission);
-            console.log(11);
+
             console.log(row);
             console.log(row.UserPermissions);
             // for (let i = 0; i < row.UserPermissions.length; i++) {
@@ -255,21 +238,47 @@ export default {
         // 保存新增/编辑
         saveEdit() {
             //调用接口保存
-
+            console.log(this.form);
+            if (this.idx == -1) {
+                //新增
+                UpdateUser(this.form).then((res) => {
+                    console.log(res);
+                    this.$message.success(`新增成功`);
+                    this.getData();
+                });
+            } else {
+                //编辑
+                UpdateUser(this.form).then((res) => {
+                    console.log(res);
+                    this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+                    this.$set(this.tableData, this.idx, this.form);
+                });
+            }
             this.editVisible = false;
-            this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-            this.$set(this.tableData, this.idx, this.form);
         },
         // 分页导航
         handlePageChange(val) {
             this.$set(this.query, 'pageIndex', val);
             this.getData();
         },
+        //新增用户
         addNewUser() {
-            this.idx = 0;
+            this.idx = -1;
             this.form = {};
             this.editVisible = true;
             this.title = '新增';
+        },
+        //密码的隐藏和显示
+        showPass() {
+            //点击图标是密码隐藏或显示
+            if (this.passw == 'text') {
+                this.passw = 'password';
+                //更换图标
+                this.icon = 'el-input__icon el-icon-view';
+            } else {
+                this.passw = 'text';
+                this.icon = 'el-input__icon el-icon-loading';
+            }
         }
         //根据权限id选中对应的checkbox
         //handlePermissionChecked(val) {
